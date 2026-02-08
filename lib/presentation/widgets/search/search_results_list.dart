@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:catbreeds/domain/entities/breed_entity.dart';
-import 'package:catbreeds/presentation/screens/cat_detail_screen.dart';
-import 'package:catbreeds/presentation/widgets/home/home_bar_indicator_widget.dart';
+import 'package:catbreeds/presentation/widgets/common/breed_card_widget.dart';
 
 /// Widget that displays search results for cat breed queries.
 ///
@@ -48,10 +47,6 @@ class SearchResultsList extends StatelessWidget {
     this.emptyMessage = 'No breeds found.',
   });
 
-  double _normalizeValue(int value) {
-    return (value / 5).clamp(0.0, 1.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     if (breeds.isEmpty) {
@@ -74,130 +69,10 @@ class SearchResultsList extends StatelessWidget {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
       itemCount: breeds.length,
-      itemBuilder: (context, index) {
-        final breed = breeds[index];
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    FadeTransition(
-                  opacity: animation,
-                  child: CatDetailScreen(catInfo: breed),
-                ),
-              ),
-            );
-          },
-          child: Hero(
-            tag: 'cat_image_${breed.id}',
-            child: Material(
-              type: MaterialType.transparency,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 20.0),
-                padding: const EdgeInsets.all(20.0),
-                height: cardHeight,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  image: DecorationImage(
-                    image: breed.image != null
-                        ? NetworkImage(breed.image!.url)
-                        : const AssetImage('assets/images/cat.png')
-                            as ImageProvider,
-                    fit: BoxFit.cover,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.black45,
-                      BlendMode.darken,
-                    ),
-                  ),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 15.0,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0.0,
-                      left: 0.0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black38,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.pets,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DefaultTextStyle(
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              child: Text(breed.name),
-                            ),
-                            const SizedBox(height: 5.0),
-                            DefaultTextStyle(
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16.0,
-                              ),
-                              child: Text(breed.origin),
-                            ),
-                            const SizedBox(height: 12.0),
-                            Row(
-                              children: [
-                                HomeBarIndicatorWidget(
-                                  value: _normalizeValue(breed.energyLevel),
-                                ),
-                                const SizedBox(width: 8.0),
-                                HomeBarIndicatorWidget(
-                                  value: _normalizeValue(breed.affectionLevel),
-                                ),
-                                const SizedBox(width: 8.0),
-                                HomeBarIndicatorWidget(
-                                  value: _normalizeValue(breed.intelligence),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: null,
-                              icon: Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
+      itemBuilder: (context, index) => BreedCard(
+        breed: breeds[index],
+        cardHeight: cardHeight,
+      ),
     );
   }
 }

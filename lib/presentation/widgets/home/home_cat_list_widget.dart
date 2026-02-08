@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:catbreeds/utils/colors.dart';
-import 'package:catbreeds/presentation/widgets/home/index.dart';
 import 'package:catbreeds/presentation/providers/breed_provider.dart';
-import 'package:catbreeds/presentation/screens/cat_detail_screen.dart';
+import 'package:catbreeds/presentation/widgets/common/breed_card_widget.dart';
 
 /// Widget that displays the list of cat breeds on the home screen.
 ///
@@ -206,10 +205,6 @@ class CatListViewWidget extends StatelessWidget {
     required this.scrollController,
   });
 
-  double _normalizeValue(int value) {
-    return (value / 5).clamp(0.0, 1.0);
-  }
-
   @override
   Widget build(BuildContext context) {
     // Responsive height calculation
@@ -217,148 +212,27 @@ class CatListViewWidget extends StatelessWidget {
     final cardHeight = (screenHeight * 0.48).clamp(280.0, 380.0);
 
     return ListView.builder(
-        controller: scrollController,
-        itemCount:
-            breedProvider.breeds.length + (breedProvider.hasReachedMax ? 0 : 1),
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-        itemBuilder: (context, index) {
-          if (index >= breedProvider.breeds.length) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: CatListLoadingState(),
-              ),
-            );
-          }
-
-          final catInfo = breedProvider.breeds[index];
-          return SizedBox(
-            height: cardHeight,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          FadeTransition(
-                              opacity: animation,
-                              child: CatDetailScreen(catInfo: catInfo))),
-                );
-              },
-              child: Hero(
-                tag: 'cat_image_${catInfo.id}',
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 20.0),
-                    padding: const EdgeInsets.all(20.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      image: DecorationImage(
-                        image: catInfo.image != null
-                            ? NetworkImage(catInfo.image!.url)
-                            : const AssetImage('assets/images/cat.png')
-                                as ImageProvider,
-                        fit: BoxFit.cover,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.black45,
-                          BlendMode.darken,
-                        ),
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 15.0,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: 0.0,
-                          left: 0.0,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.black38,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.pets,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                        // Contenido principal
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                DefaultTextStyle(
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  child: Text(catInfo.name),
-                                ),
-                                const SizedBox(height: 5.0),
-                                DefaultTextStyle(
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 16.0,
-                                  ),
-                                  child: Text(catInfo.origin),
-                                ),
-                                const SizedBox(height: 12.0),
-                                // Indicadores visuales sutiles
-                                Row(
-                                  children: [
-                                    HomeBarIndicatorWidget(
-                                      value:
-                                          _normalizeValue(catInfo.energyLevel),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    HomeBarIndicatorWidget(
-                                      value: _normalizeValue(
-                                          catInfo.affectionLevel),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    HomeBarIndicatorWidget(
-                                      value:
-                                          _normalizeValue(catInfo.intelligence),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.arrow_forward,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+      controller: scrollController,
+      itemCount:
+          breedProvider.breeds.length + (breedProvider.hasReachedMax ? 0 : 1),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+      itemBuilder: (context, index) {
+        if (index >= breedProvider.breeds.length) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: CatListLoadingState(),
             ),
           );
-        });
+        }
+
+        final catInfo = breedProvider.breeds[index];
+        return BreedCard(
+          breed: catInfo,
+          cardHeight: cardHeight,
+        );
+      },
+    );
   }
 }

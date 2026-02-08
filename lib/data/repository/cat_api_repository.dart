@@ -72,14 +72,12 @@ class CatApiRepository implements ICatApiRepository {
   ///
   /// **Throws:**
   /// - [ApiException] if `CAT_API_KEY` is not configured in `.env`
-  CatApiRepository() {
+  CatApiRepository({
+    HttpClientWithRetry? httpClient,
+  }) {
     _apiKey = dotenv.env['CAT_API_KEY'] ?? '';
     _baseUrl = dotenv.env['CAT_API_BASE_URL'] ?? 'https://api.thecatapi.com/v1';
-    _httpClient = HttpClientWithRetry(
-      maxRetries: 3,
-      timeout: const Duration(seconds: 30),
-      retryDelay: const Duration(milliseconds: 500),
-    );
+    _httpClient = httpClient ?? HttpClientWithRetry();
 
     if (_apiKey.isEmpty) {
       throw ApiException('CAT_API_KEY not found in environment variables');

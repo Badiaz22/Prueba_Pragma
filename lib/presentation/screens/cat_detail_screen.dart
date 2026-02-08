@@ -76,6 +76,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
           top: 20,
           left: 20,
           child: IconButton(
+            color: AppColors.whiteBackgroundColor,
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),

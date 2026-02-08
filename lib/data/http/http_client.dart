@@ -37,7 +37,7 @@ class HttpClientWithRetry extends http.BaseClient {
   final Duration retryDelay;
 
   /// Reusable internal HTTP client for all requests.
-  final http.Client _inner = http.Client();
+  final http.Client _inner;
 
   /// Creates an instance of [HttpClientWithRetry] with configurable parameters.
   ///
@@ -45,11 +45,13 @@ class HttpClientWithRetry extends http.BaseClient {
   /// - `maxRetries`: 3 attempts
   /// - `timeout`: 30 seconds
   /// - `retryDelay`: 500 milliseconds
+  /// - `client`: Custom HTTP client (optional, defaults to http.Client)
   HttpClientWithRetry({
+    http.Client? client,
     this.maxRetries = 3,
     this.timeout = const Duration(seconds: 30),
     this.retryDelay = const Duration(milliseconds: 500),
-  });
+  }) : _inner = client ?? http.Client();
 
   /// Sends an HTTP request with automatic retry logic.
   ///

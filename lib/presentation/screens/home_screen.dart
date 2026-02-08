@@ -72,14 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             icon: const Icon(CupertinoIcons.search)),
         elevation: 0,
-        actions: [
-          IconButton(
-              onPressed: null,
-              icon: Icon(
-                CupertinoIcons.ellipsis_vertical,
-                color: AppColors.primaryGreenColor,
-              )),
-        ],
       ),
       body: HomeCatListWidget(size: size, breedProvider: widget.breedProvider),
     );
